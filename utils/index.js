@@ -1,5 +1,9 @@
 const fs = require('fs/promises');
 
+const HTTP_OK_STATUS = 200;
+
+const PORT = '3000';
+
 const readFile = async () => { // le json
   const talkers = await fs.readFile('./talker.json', 'utf-8');
   return JSON.parse(talkers);
@@ -13,4 +17,6 @@ const writeFile = async (content) => { // escreve no json
 module.exports = {
   readFile,
   writeFile,
+  HTTP_OK_STATUS,
+  PORT,
 };
