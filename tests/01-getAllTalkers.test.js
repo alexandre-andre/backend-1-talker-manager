@@ -5,7 +5,7 @@ const talkersSeed = require('./seed.json');
 
 const url = 'http://localhost:3000';
 
-describe('1 - Crie o endpoint GET /talker', () => {
+describe.only('1 - Crie o endpoint GET /talker', () => {
   beforeEach(() => {
     const talkerSeed = fs.readFileSync(
       path.join(__dirname, 'seed.json'),
