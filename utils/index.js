@@ -1,6 +1,7 @@
 const fs = require('fs/promises');
 
 const HTTP_OK_STATUS = 200;
+const STATUS_BAD_REQUEST = 404;
 
 const PORT = '3000';
 
@@ -18,5 +19,6 @@ module.exports = {
   readFile,
   writeFile,
   HTTP_OK_STATUS,
+  STATUS_BAD_REQUEST,
   PORT,
 };
