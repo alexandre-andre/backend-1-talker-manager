@@ -7,19 +7,42 @@ const loginRoute = express.Router();
 const emailValidation = /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/i;
 const SECRET = 'usertools';
 
-function verifyLogin(req, res, next) {
-  const { email, password } = req.body;
-  const response = res.status(401).json({ message: 'Email ou senha inválido' });
-  if (!emailValidation.test(email) || email === null) {
-    return response;
+function verifyEmail(req, res, next) {
+  const { email } = req.body;
+  
+  if (!email || email === null) {
+    res.status(400).json({
+      message: 'O campo "email" é obrigatório',
+    });
   }
-  if (!password || password === null) {
-    return response;
+  
+  if (!emailValidation.test(email)) {
+    res.status(400).json({
+      message: 'O "email" deve ter o formato "email@email.com"',
+    });
   }
   next();
 }
 
-loginRoute.post('/', verifyLogin, (_req, res) => {
+function verifyPassword(req, res, next) {
+  const { password } = req.body;
+  const MIN_LENGTH_PASSWORD = 6;
+  
+  if (!password || password === null) {
+    res.status(400).json({ message: 'O campo "password" é obrigatório' });
+  }
+  
+  if (password.length < MIN_LENGTH_PASSWORD) {
+    res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+  }
+  next();
+}
+
+// function verifyLogin(_req, _res, next) {
+//   if (verifyEmail && verifyPassword) next();
+// }
+
+loginRoute.post('/', verifyEmail, verifyPassword, (_req, res) => {
   const token = jwt.sign({ userId: 1 }, SECRET);
   const tokenSliced = token.slice(0, 16);
   const last = Math.floor(Math.random() * 9);
