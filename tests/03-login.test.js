@@ -37,6 +37,7 @@ describe('3 - Crie o endpoint POST /login', () => {
           expect(result.token.length).toBe(16);
           token = result.token;
         });
+        console.log(token);
       return token;
     };
     for (let round = 0; round < 10; round++) {
