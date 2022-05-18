@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { verifyEmail, verifyPassword } = require('../middlewares/login');
-const { HTTP_OK_STATUS } = require('../utils');
+const { STATUS: { HTTP_OK_STATUS } } = require('../utils');
 
 const loginRoute = express.Router();
 const SECRET = 'usertools';

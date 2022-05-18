@@ -2,7 +2,6 @@ const { emailValidation } = require('../utils');
 
 function verifyEmail(req, res, next) {
   const { email } = req.body;
-  
   if (!email || email === null) {
     res.status(400).json({
       message: 'O campo "email" é obrigatório',

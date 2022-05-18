@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { HTTP_OK_STATUS, PORT } = require('./utils');
 const { talkerRoute } = require('./routes/talker');
 const { loginRoute } = require('./routes/login');
+// const { validateAuthorization } = require('./middlewares/auth-middleware');
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 //   console.log('req.query:', req.query);
 //   console.log('req.headers:', req.headers);
 //   console.log('req.body:', req.body);
+//   console.log('req.authorization:', req.authorization);
 //   console.log('------------------------------------------------------------------');
 //   next();
 // });
@@ -23,6 +25,8 @@ app.use(bodyParser.json());
 app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
+
+// app.use(validateAuthorization);
 
 app.use('/talker', talkerRoute);
 
