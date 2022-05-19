@@ -1,4 +1,5 @@
 const express = require('express');
+const rescue = require('express-rescue');
 const { validateAuthorization } = require('../middlewares/auth-middleware');
 const { validateTalker } = require('../middlewares/talker');
 const { STATUS, readFile, writeFile } = require('../utils');
@@ -25,7 +26,7 @@ talkerRoute.get('/:id', async (req, res) => {
   return res.status(HTTP_OK_STATUS).json(findTalker);
 });
 
-talkerRoute.post('/', validateAuthorization, validateTalker, async (req, res) => {
+talkerRoute.post('/', validateAuthorization, validateTalker, rescue(async (req, res) => {
   const { name, age, talk } = req.body;
   const talker = await readFile();
 
@@ -41,7 +42,7 @@ talkerRoute.post('/', validateAuthorization, validateTalker, async (req, res) =>
   await writeFile(talker);
 
   return res.status(CREATED).json(newTalker);
-});
+}));
 
 module.exports = {
   talkerRoute,

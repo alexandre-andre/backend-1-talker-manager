@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { HTTP_OK_STATUS, PORT } = require('./utils');
+const { PORT, STATUS: { HTTP_OK_STATUS } } = require('./utils');
 const { talkerRoute } = require('./routes/talker');
 const { loginRoute } = require('./routes/login');
 // const { validateAuthorization } = require('./middlewares/auth-middleware');
@@ -31,6 +31,10 @@ app.get('/', (_request, response) => {
 app.use('/talker', talkerRoute);
 
 app.use('/login', loginRoute);
+
+app.use((err, _req, res, _next) => {
+  res.status(err.status || 500).json({ message: err.message });
+});
 
 app.listen(PORT, () => {
   console.log('Online');
