@@ -1,7 +1,7 @@
 const express = require('express');
 const rescue = require('express-rescue');
 const { validateAuthorization } = require('../middlewares/auth-middleware');
-const { validateTalker } = require('../middlewares/talker');
+const { validateTalker, findTalker, editTalker } = require('../middlewares/talker');
 const { STATUS, readFile, writeFile } = require('../utils');
 
 const { HTTP_OK_STATUS, CREATED, NOT_FOUND } = STATUS;
@@ -10,7 +10,7 @@ const talkerRoute = express.Router();
 
 talkerRoute.get('/', async (_req, res) => {
   const talker = await readFile();
-  return res.status(HTTP_OK_STATUS).json(talker);
+  res.status(HTTP_OK_STATUS).json(talker);
 });
 
 talkerRoute.get('/:id', async (req, res) => {
@@ -23,25 +23,32 @@ talkerRoute.get('/:id', async (req, res) => {
       .status(NOT_FOUND).json({ message: 'Pessoa palestrante não encontrada' });
   }
 
-  return res.status(HTTP_OK_STATUS).json(findTalker);
+  res.status(HTTP_OK_STATUS).json(findTalker);
 });
 
 talkerRoute.post('/', validateAuthorization, validateTalker, rescue(async (req, res) => {
-  const { name, age, talk } = req.body;
+  const body = req.body;
   const talker = await readFile();
 
   const newTalker = {
     id: Math.max(...talker.map(({ id }) => id)) + 1,
-    name,
-    age,
-    talk,
+    ...body
   };
 
   talker.push(newTalker);
 
   await writeFile(talker);
 
-  return res.status(CREATED).json(newTalker);
+  res.status(CREATED).json(newTalker);
+}));
+
+talkerRoute.put('/:id', validateAuthorization, validateTalker, rescue(async (req, res) => {
+  const { id } = req.params;
+  const body = req.body;
+
+  const editedTalker = await editTalker(id, body)
+
+  res.status(HTTP_OK_STATUS).json(editedTalker);
 }));
 
 module.exports = {

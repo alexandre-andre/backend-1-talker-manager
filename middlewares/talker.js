@@ -1,4 +1,4 @@
-const { STATUS, RULES_TALKER, DATA_REGEX } = require('../utils');
+const { STATUS, RULES_TALKER, DATA_REGEX, readFile, writeFile } = require('../utils');
 
 const { BAD_REQUEST } = STATUS;
 
@@ -53,12 +53,37 @@ function validateTalker(req, res, next) {
   validateName(name, res);
   validateAge(age, res);
   validateTalk(talk, watchedAt, rate, res);
-  validateTalkFieldWatchedAt(watchedAt, res);
   validateTalkFieldRate(rate, res);
+  validateTalkFieldWatchedAt(watchedAt, res);
 
   next();
 }
 
+function findTalker(talkers, id, body) {
+  const findedTalker = talkers.find((t) => t.id === Number(id));
+  
+  if (!findedTalker) return res.status(NOT_FOUND).json({ message: 'Não encontrado' });
+  
+  talkers[findedTalker] = {
+    ...talkers[findedTalker],
+    ...body,
+    id: Number(id),
+  };
+  
+  const editedTalker = talkers[findedTalker];
+  return editedTalker;
+}
+
+async function editTalker(id, body){
+  const talker = await readFile();
+
+  const editedTalker = findTalker(talker, id, body);
+
+  await writeFile([...talker, editedTalker]);
+  return editedTalker;
+}
+
 module.exports = {
   validateTalker,
+  editTalker,
 };

@@ -6,11 +6,11 @@ function validateAuthorization(req, res, next) {
   const { authorization } = req.headers;
   
   if (!authorization) {
-    res.status(STATUS.NOT_AUTHORIZED).json({ message: 'Token não encontrado' });
+    return res.status(STATUS.NOT_AUTHORIZED).json({ message: 'Token não encontrado' });
   }
   
   if (authorization.length !== AUTHORIZATION_LENGTH) {
-    res.status(STATUS.NOT_AUTHORIZED).json({ message: 'Token inválido' });
+    return res.status(STATUS.NOT_AUTHORIZED).json({ message: 'Token inválido' });
   }
   
   next();
