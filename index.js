@@ -20,7 +20,7 @@ app.use('/talker', talkerRoute);
 app.use('/login', loginRoute);
 
 app.all('*', (err, _req, res, _next) => {
-  res.status(err.status || 500).json({ message: err.message || 'Server internal error'});
+  res.status(err.status || 500).json({ message: err.message || 'Server internal error' });
 });
 
 app.listen(PORT, () => {

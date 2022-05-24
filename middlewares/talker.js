@@ -1,6 +1,6 @@
 const { STATUS, RULES_TALKER, DATA_REGEX, readFile, writeFile } = require('../utils');
 
-const { BAD_REQUEST } = STATUS;
+const { BAD_REQUEST, NO_CONTENT, HTTP_OK_STATUS } = STATUS;
 
 const { MIN_LENGTH_NAME, MIN_AGE, MIN_RATE, MAX_RATE } = RULES_TALKER;
 
@@ -26,7 +26,7 @@ function validateAge(age, res) {
 }
 
 function validateTalk(talk, watchedAt, rate, res) {
-  if (!talk || !watchedAt || !rate) {
+  if (!talk || !watchedAt || rate === undefined) {
     return res.status(BAD_REQUEST).json({
       message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
     });
@@ -57,6 +57,13 @@ function validateTalker(req, res, next) {
   validateTalkFieldWatchedAt(watchedAt, res);
 
   next();
+}
+
+async function getSearchTerm(talkers, name) {
+  const searchTerm = await talkers.filter((t) => t.name.includes(name));
+  if (!searchTerm) return [];
+  if (searchTerm === undefined || searchTerm === '') return talkers;
+  return searchTerm;
 }
 
 async function getTalker(talkers, id) {
@@ -100,4 +107,6 @@ module.exports = {
   validateTalker,
   editTalker,
   removeTalker,
+  getTalker,
+  getSearchTerm,
 };
