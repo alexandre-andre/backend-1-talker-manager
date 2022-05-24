@@ -1,7 +1,14 @@
 const express = require('express');
 const rescue = require('express-rescue');
 const { validateAuthorization } = require('../middlewares/auth-middleware');
-const { validateTalker, editTalker, removeTalker, getSearchTerm } = require('../middlewares/talker');
+
+const {
+  validateTalker,
+  editTalker,
+  removeTalker,
+  getSearchTerm,
+} = require('../middlewares/talker');
+
 const { STATUS, readFile, writeFile } = require('../utils');
 
 const { HTTP_OK_STATUS, CREATED, NO_CONTENT, NOT_FOUND } = STATUS;
@@ -36,13 +43,10 @@ talkerRoute.get('/:id', async (req, res) => {
   res.status(HTTP_OK_STATUS).json(findTalker);
 });
 
-
-
 talkerRoute.post('/', validateAuthorization, validateTalker, rescue(async (req, res) => {
-  const body = req.body;
   const talker = await readFile();
 
-  const newTalker = { id: Math.max(...talker.map(({ id }) => id)) + 1, ...body };
+  const newTalker = { id: Math.max(...talker.map(({ id }) => id)) + 1, ...req.body };
 
   talker.push(newTalker);
 
@@ -53,9 +57,8 @@ talkerRoute.post('/', validateAuthorization, validateTalker, rescue(async (req, 
 
 talkerRoute.put('/:id', validateAuthorization, validateTalker, rescue(async (req, res) => {
   const { id } = req.params;
-  const body = req.body;
 
-  const editedTalker = await editTalker(id, body)
+  const editedTalker = await editTalker(id, req.body);
 
   res.status(HTTP_OK_STATUS).json(editedTalker);
 }));
@@ -63,7 +66,7 @@ talkerRoute.put('/:id', validateAuthorization, validateTalker, rescue(async (req
 talkerRoute.delete('/:id', validateAuthorization, rescue(async (req, res) => {
   const { id } = req.params;
   await removeTalker(id);
-  res.status(NO_CONTENT).end()
+  res.status(NO_CONTENT).end();
 }));
 
 module.exports = {

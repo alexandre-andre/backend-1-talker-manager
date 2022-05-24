@@ -1,6 +1,6 @@
 const { STATUS, RULES_TALKER, DATA_REGEX, readFile, writeFile } = require('../utils');
 
-const { BAD_REQUEST, NO_CONTENT, HTTP_OK_STATUS } = STATUS;
+const { BAD_REQUEST, NO_CONTENT } = STATUS;
 
 const { MIN_LENGTH_NAME, MIN_AGE, MIN_RATE, MAX_RATE } = RULES_TALKER;
 
@@ -69,24 +69,22 @@ async function getSearchTerm(talkers, name) {
 async function getTalker(talkers, id) {
   const findedTalker = await talkers.find((t) => t.id === Number(id));
 
-  if (!findedTalker) return res.status(NO_CONTENT).json({ message: 'Não encontrado' });
+  if (!findedTalker) throw new Error({ status: NO_CONTENT, message: 'Não encontrado' });
+
   return findedTalker;
 }
 
 async function findTalker(talkers, id, body) {
   const findedTalker = await getTalker(talkers, id);
   
-  talkers[findedTalker] = {
-    ...talkers[findedTalker],
-    ...body,
-    id: Number(id),
-  };
-  
-  const editedTalker = talkers[findedTalker];
+  const getFindedTalker = { ...findedTalker, ...body, id: Number(id) };
+
+  const editedTalker = getFindedTalker;
+
   return editedTalker;
 }
 
-async function editTalker(id, body){
+async function editTalker(id, body) {
   const talkers = await readFile();
   const editedTalker = await findTalker(talkers, id, body);
   await writeFile([...talkers, editedTalker]);
@@ -98,9 +96,9 @@ async function removeTalker(id) {
   const talkers = await readFile();
   const talkerToBeRemoved = await getTalker(talkers, id);
 
-  const talkersWithRemovedTalker = talkers.splice(talkers.talkerToBeRemoved, 1);
+  const talkersWithRemovedTalker = talkers.splice(talkers[talkerToBeRemoved], 1);
 
-  await writeFile([ ...talkersWithRemovedTalker, id ]);
+  await writeFile([...talkersWithRemovedTalker, id]);
 }
 
 module.exports = {
